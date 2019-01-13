@@ -178,59 +178,71 @@ function fsa() {
                 <form id="register-form" class="active-form form-login" action="" method="post">
 					</script>
 <?php
-include "inc/odbc_config.php";
-if ($_POST) {
-$_SESSION["system"] = "true";
-$passnew1 = $_POST['passnew1'];
-$passnew2 = $_POST['passnew2'];
+    include "inc/odbc_config.php";
+    if (isset($_POST['ok'])) 
+    {
+	$_SESSION["system"] = "true";
+	$passnew1 = check($_POST['passnew1']);
+	$passnew2 = check($_POST['passnew2']);
+	$oldPassword = check($_POST['password']);
+	    
+	$username = $_SESSION["username"];
+	$password = $_SESSION["password"];
+	$user_no = $_SESSION["user_no"];
 
-$username = $_SESSION["username"];
-$password = $_SESSION["password"];
-$user_no = $_SESSION["user_no"];
+	$sql = "SELECT * FROM MB_USR WHERE user_id='$username' and user_pwd='$password'";
+	$result = odbc_exec($conn, $sql);
 
-$sql = "SELECT * FROM MB_USR WHERE user_id='$username' and user_pwd='$password'";
-$result = odbc_exec($conn, $sql);
-
-$user = odbc_result($result, "user_id");
-$user_nick = odbc_result($result, "user_nick");
-$user_no = odbc_result($result, "user_no");
-$user_password = odbc_result($result, "user_pwd");
-
-
-	$veriss = odbc_exec($conn,"SELECT * FROM MB_USR WHERE user_id='$user_id' and user_pwd='$password'");
-	$varmis = odbc_result($veriss,1);
-	if ($varmis){
-	echo '<div align="center">
-	  <p align="center"><strong><font size="3" face="Arial" color="red">Sai mật khẩu cũ<br><br><p align="center"><input type="submit" onclick="javascript:history.go(-1)" name="ok" class="button" value="BACK" /></p></strong></p>
-	</div>';
-	}
-	else {
-
-	$msquerys="UPDATE MB_USR SET user_pwd = '$passnew1' WHERE user_no = $user_no";
-	$msresultss=odbc_exec($conn,$msquerys) or die('error');  	//gio vi du a thay nhu nay
-
-	echo '<div align="center">
-	 <p align="center"><strong><img src="./img/common/success.gif"></strong></p><br>
-	  <p align="center"><strong><font size="5" face="Arial" color="green">ĐỔI MẬT KHẨU THÀNH CÔNG</font></strong></p><br>
-	  <p align="center"><font size="4" face="Arial" color="blue"><strong><a href="./taikhoan"><img src="./img/common/sidebar_h_welcome.png"></a></strong></p><br>
-	  <p align="center"><img src="./img/common/footer2.png" width="30%"></p>
-	</div>
-	';
-	}
-	echo "<script>
-		setTimeout(function(){
-			window.location.href = 'logout.php';
-
-		},3000);
-	</script>"; 
-	function checkInject($object)
+	$user = odbc_result($result, "user_id");
+	$user_nick = odbc_result($result, "user_nick");
+	$user_no = odbc_result($result, "user_no");
+	$user_password = odbc_result($result, "user_pwd");
+	    
+	if(trim($passnew1) || trim($passnew2) || trim($oldPassword))
 	{
-		return strip_tags(addslashes(htmlspecialchars($object)));
+		if($passnew1 !== $passnew2)
+		{
+		   ?>
+		    	<div align="center">
+		  		<p align="center"><strong><font size="3" face="Arial" color="red">Mật khẩu mới phải trùng nhau<br><br><p align="center"><input type="submit" onclick="javascript:history.go(-1)" name="ok" class="button" value="BACK" /></p></strong></p>
+		   	</div>
+		    <?php
+		}
+		elseif($password !== $oldPassword)
+		{
+		    ?>
+		    	<div align="center">
+		  		<p align="center"><strong><font size="3" face="Arial" color="red">Sai mật khẩu cũ<br><br><p align="center"><input type="submit" onclick="javascript:history.go(-1)" name="ok" class="button" value="BACK" /></p></strong></p>
+		   	</div>
+		    <?php
+		}
+		else
+		{
+			msquerys="UPDATE MB_USR SET user_pwd = '$passnew1' WHERE user_no = $user_no";
+			$msresultss=odbc_exec($conn,$msquerys) or die('error');  
+			?>
+			 <div align="center">
+			     <p align="center"><strong><img src="./img/common/success.gif"></strong></p><br>
+			     <p align="center"><strong><font size="5" face="Arial" color="green">ĐỔI MẬT KHẨU THÀNH CÔNG</font></strong></p><br>
+			     <p align="center"><font size="4" face="Arial" color="blue"><strong><a href="./taikhoan"><img src="./img/common/sidebar_h_welcome.png"></a></strong></p><br>
+			     <p align="center"><img src="./img/common/footer2.png" width="30%"></p>
+			</div>
+		    	<script>
+				setTimeout(function(){
+					window.location.href = 'logout.php';
+				},1500);
+			</script>
+		    	<?php
+		}
+	else
+	{
+            ?>
+		 <div align="center">
+		  <p align="center"><strong><font size="3" face="Arial" color="red">Không được bỏ trống !<br><br><p align="center"><input type="submit" onclick="javascript:history.go(-1)" name="ok" class="button" value="BACK" /></p></strong></p>
+		 </div>
+	    <?php
 	}
-	// lúc a gọi ra thì như này
-	$username = checkInject($_POST['username']);
-
-}
+     }
 else{
 ?>
 <div align="center">

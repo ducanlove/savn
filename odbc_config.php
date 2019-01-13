@@ -10,11 +10,11 @@ $dbpass = "Sudden123";
 
 $conn = odbc_connect("Driver={SQL Server};Server=INSTANCE-1,1433;Charset=utf8;Database=LOW_DB","$dbuser","$dbpass");
 
-/* Kayit Ayarlarý */
-$kayit = "acik"; // Üyelik alýmý
-$sifredegisimi = "kapat"; //þifre hatýrlatma deðiþtirme
+/* Kayit AyarlarÃ½ */
+$kayit = "acik"; // Ãœyelik alÃ½mÃ½
+$sifredegisimi = "kapat"; //Ã¾ifre hatÃ½rlatma deÃ°iÃ¾tirme
 
-/* Tarih Ayarlarý (Düzenlemeyiniz!!!) */
+/* Tarih AyarlarÃ½ (DÃ¼zenlemeyiniz!!!) */
 
 date_default_timezone_set('Europe/Istanbul');
 $todayh = getdate();
@@ -23,5 +23,9 @@ $m = $todayh["mon"];
 $y = $todayh["year"];	
 $date = $d."/".$m."/".$y;
 
+function check($object)
+{
+  return htmlspecialchars(addslashes(strip_tags($object)));
+}
 
 ?>
